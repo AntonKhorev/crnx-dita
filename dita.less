@@ -1,0 +1,17 @@
+@cell-width: 250;
+
+table.dita {
+	table-layout: fixed;
+	border-collapse: collapse;
+	& > thead, & > tfoot, & > tbody {
+		& > tr > td, & > tr > th {
+			min-width: unit(@cell-width,px);
+			max-width: unit(@cell-width,px);
+			padding: 0;
+			position: relative;
+		}
+		& > tr > td {
+			overflow: hidden;
+		}
+	}
+}
