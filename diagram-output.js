@@ -25,9 +25,9 @@ class DiagramOutput {
 						})
 					))
 				),
-				$("<tr>").append(
-					options.columns.map(classId=>`<th>${options.data[classId].name}</th>`)
-				)
+				options.dag.visibleDepthNodes.map(classIdSet=>$("<tr>").append(
+					options.columns.map(classId=>classIdSet[classId]?`<th>${options.data[classId].name}</th>`:`<th></th>`)
+				))
 			)
 		}
 		update()

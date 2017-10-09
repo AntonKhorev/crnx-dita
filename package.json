@@ -1,7 +1,13 @@
 {
   "name": "crnx-dita",
+  "scripts": {
+    "test": "mocha"
+  },
   "description": "Class diagram/table",
   "author": "Anton Khorev",
   "license": "ISC",
-  "repository": "AntonKhorev/crnx-dita"
+  "repository": "AntonKhorev/crnx-dita",
+  "devDependencies": {
+    "mocha": "^4.0.1"
+  }
 }
