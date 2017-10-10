@@ -1,9 +1,12 @@
 'use strict'
 
+const makeDiagramLayout=require('./diagram-layout')
+
 class DiagramOutput {
 	constructor(options) {
 		const $output=$("<thead>")
 		const update=()=>{
+			const layout=makeDiagramLayout(options.columns,options.dag.visibleParents)
 			$output.empty().append(
 				$("<tr>").append(
 					options.columns.map((classId,i)=>$("<th>").append(
