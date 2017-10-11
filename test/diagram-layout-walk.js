@@ -41,6 +41,29 @@ describe("diagramLayoutWalk",()=>{
 			['i',0,0,'n'],
 		])
 	})
+	it("walks 2-element chain twice at different starting points",()=>{
+		const layout=[
+			[{node:'a',bn:true},{}],
+			[{rt:true},{bl:true}],
+			[{},{node:'b',nt:true}],
+		]
+		const calls1=getWalkCalls(layout,0,0)
+		expect(calls1).to.have.deep.members([
+			['i',0,0,'n'],
+		])
+		const calls2=getWalkCalls(layout,1,2)
+		expect(calls2).to.have.deep.members([
+			['i',1,2,'n'],
+			['o',1,2,'n','t'],
+			['i',1,1,'b'],
+			['o',1,1,'b','l'],
+			['i',0,1,'r'],
+			['o',0,1,'r','t'],
+			['i',0,0,'b'],
+			['o',0,0,'b','n'],
+			['i',0,0,'n'],
+		])
+	})
 	it("walks 3-element fork",()=>{
 	const calls=getWalkCalls([
 			[{node:'a',bn:true},{},{node:'b',bn:true}],

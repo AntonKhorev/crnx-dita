@@ -2,7 +2,8 @@
 
 const chai=require('chai')
 const expect=chai.expect
-const makeDiagramLayout=require('../diagram-layout')
+const diagramLayout=require('../diagram-layout')
+const diagramLayoutWalk=require('../diagram-layout-walk')
 
 const assertDiagramLayout=(layout,columns,parents)=>{
 	expect(layout).to.be.an('array')
@@ -28,63 +29,41 @@ const assertDiagramLayout=(layout,columns,parents)=>{
 	})
 	expect(visitedNodes).to.have.members(columns,"expected to find the same nodes as in columns arg")
 	columns.forEach((node,x)=>{
-		const nodeParents={}
-		let y=nodeHeights[node]
-		if (layout[y][x].t) {
-			const rec=(y,x)=>{
-				expect(y).to.be.at.least(0)
-				expect(layout[y][x].to.have.any.keys('b','bl','br','bt'))
-				if (layout[y][x].b) {
-					expect(layout[y][x]).to.have.keys('node')
-					nodeParents[layout[y][x].node]=true
-				}
-				if (layout[y][x].bl) {
-					let x1=x
-					do {
-						x1--
-						expect(x1).to.be.at.least(0)
-						expect(layout[y][x1]).to.have.any.keys('lr','lt')
-						if (layout[y][x1].lt) rec(y-1,x1)
-					} while (layout[y][x1].lr)
-				}
-				if (layout[y][x].br) {
-					let x1=x
-					do {
-						x1++
-						expect(x1).to.be.below(n)
-						expect(layout[y][x1]).to.have.any.keys('rl','rt')
-						if (layout[y][x1].rt) rec(y-1,x1)
-					} while (layout[y][x1].rl)
-				}
-				if (layout[y][x].bt) {
-					rec(y-1,x)
+		const nodeParents=[]
+		diagramLayoutWalk(layout,x,nodeHeights[node],'n',(x,y,d)=>{
+			if (d=='n') {
+				expect(layout[y][x].node).to.not.be.undefined
+				if (layout[y][x].node!=node) {
+					nodeParents.push(layout[y][x].node)
+					return true
 				}
 			}
-			rec(y-1,x)
-		}
-		expect(nodeParents).to.have.keys(parents[node])
+		})
+		expect(nodeParents).to.have.members(Object.keys(parents[node]))
 	})
 }
 
 const testDiagramLayout=(columns,parents)=>{
-	const layout=makeDiagramLayout(columns,parents)
+	const layout=diagramLayout(columns,parents)
 	assertDiagramLayout(layout,columns,parents)
 }
 
 describe("assertDiagramLayout",()=>{
 	it("validates correct path finding",()=>{
-		assertDiagramLayout(
-			[
-				[{node:'a',b:true},{}],
-				[{rt:true},{bl:true}],
-				[{},{node:'b',t:true}],
-			],
-			['a','b'],{a:{},b:{a:true}}
-		)
+		assertDiagramLayout([
+			[{node:'a',bn:true},{}],
+			[{rt:true},{bl:true}],
+			[{},{node:'b',nt:true}],
+		],['a','b'],{a:{},b:{a:true}})
+	})
+	it("validates incorrect path finding",()=>{
+		expect(()=>assertDiagramLayout([
+			[{node:'a'},{node:'b'}],
+		],['a','b'],{a:{},b:{a:true}})).to.throw()
 	})
 })
 
-describe("makeDiagramLayout",()=>{
+describe("diagramLayout",()=>{
 	it("makes layout for 1 node",()=>{
 		testDiagramLayout(['a'],{a:{}})
 	})

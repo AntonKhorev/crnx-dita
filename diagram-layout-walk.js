@@ -12,8 +12,8 @@ const dy={b:+1,t:-1,l:0,r:0,n:0}
 const diagramLayoutWalk=(layout,x,y,inDirection,inCallback=()=>0,outCallback=()=>0)=>{
 	const visited=layout.map(row=>row.map(cell=>({})))
 	const rec=(x,y,id)=>{
-		if (layout[y][x][id]) return
-		layout[y][x][id]=true
+		if (visited[y][x][id]) return
+		visited[y][x][id]=true
 		if (inCallback(x,y,id)) return
 		for (let od in nd) {
 			if (
