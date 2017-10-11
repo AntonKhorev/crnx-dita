@@ -45,7 +45,7 @@ class Dag {
 				}
 			}
 		}
-		this.visibleDepthNodes=[]
+		this.visibleDepthNodes=[] // TODO don't need?
 		this.visibleParents={}
 		for (let node in visibleNodes) {
 			traverseNode(node)

@@ -1,12 +1,12 @@
 'use strict'
 
-const makeDiagramLayout=require('./diagram-layout')
+const diagramLayout=require('./diagram-layout')
 
 class DiagramOutput {
 	constructor(options) {
 		const $output=$("<thead>")
 		const update=()=>{
-			const layout=makeDiagramLayout(options.columns,options.dag.visibleParents)
+			const layout=diagramLayout(options.columns,options.dag.visibleParents)
 			$output.empty().append(
 				$("<tr>").append(
 					options.columns.map((classId,i)=>$("<th>").append(
@@ -28,8 +28,21 @@ class DiagramOutput {
 						})
 					))
 				),
+				/*
 				options.dag.visibleDepthNodes.map(classIdSet=>$("<tr>").append(
 					options.columns.map(classId=>classIdSet[classId]?`<th>${options.data[classId].name}</th>`:`<th></th>`)
+				))
+				*/
+				layout.map(row=>$("<tr>").append(
+					row.map(cell=>{
+						const $cell=$("<th>")
+						if (cell.node!==undefined) {
+							const classId=cell.node
+							$cell.append(options.data[classId].name,' ')
+						}
+						$cell.append(JSON.stringify(cell))
+						return $cell
+					})
 				))
 			)
 		}
