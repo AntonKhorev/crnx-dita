@@ -1,4 +1,15 @@
 @cell-width: 250;
+@arc-cell-height: 30;
+@passive-stroke-color: #444;
+
+.svg(@width,@height,@contents) {
+	@svg: "<svg xmlns='http://www.w3.org/2000/svg' width='@{width}' height='@{height}'>@{contents}</svg>";
+	@data: escape(@svg);
+	background-image: url("data:image/svg+xml;charset=utf-8,@{data}");
+}
+.arc(@width; @height; @d; @color: @passive-stroke-color) {
+	.svg(@width,@height,"<path d='@{d}' fill='none' stroke='@{color}' stroke-width='2' />");
+}
 
 table.dita {
 	table-layout: fixed;
@@ -12,6 +23,60 @@ table.dita {
 		}
 		& > tr > td {
 			overflow: hidden;
+		}
+	}
+	& > thead {
+		& > tr.arcs {
+			& > th {
+				height: unit(@arc-cell-height,px);
+				.arcs {
+					.arc {
+						@cx: @cell-width;
+						@cy: @arc-cell-height;
+						@hcx: @cx/2;
+						@hcy: @cy/2;
+						@hcyj1: @hcy - 2;
+						@hcyj2: @hcy + 2;
+						@hcxj1: @hcx - 2;
+						@hcxj2: @hcx + 2;
+						.hi-arc(@d) {
+							.arc(@cx,@cy,@d);
+							//&.hi {
+							//	.arc(@cx,@cy,@d,#F80);
+							//}
+						}
+						position: absolute;
+						height: 100%;
+						width: 100%;
+						top: 0;
+						left: 0;
+						&.rt {
+							.hi-arc("M @{hcx} 0 a @{hcy} @{hcy} 0 0 0 @{hcy} @{hcy} H @{cx}");
+						}
+						&.lt {
+							.hi-arc("M @{hcx} 0 a @{hcy} @{hcy} 0 0 1 -@{hcy} @{hcy} H 0");
+						}
+						&.bl {
+							.hi-arc("M @{hcx} @{cy} a @{hcy} @{hcy} 0 0 0 -@{hcy} -@{hcy} H 0");
+						}
+						&.br {
+							.hi-arc("M @{hcx} @{cy} a @{hcy} @{hcy} 0 0 1 @{hcy} -@{hcy} H @{cx}");
+						}
+						&.bt {
+							.hi-arc("M @{hcx} 0 V @{cy}");
+						}
+						&.rl, &.lr {
+							.hi-arc("M 0 @{hcy} H @{cx}");
+						}
+						&.rl ~ .arc.bt, &.lr ~ .arc.bt {
+							.hi-arc("M @{hcx} 0 V @{hcyj1} M @{hcx} @{hcyj2} V @{cy}");
+						}
+						&.bt ~ .arc.rl, &.bt ~ .arc.lr {
+							.hi-arc("M 0 @{hcy} H @{hcxj1} M @{hcxj2} @{hcy} H @{cx}");
+						}
+					}
+				}
+			}
 		}
 	}
 }

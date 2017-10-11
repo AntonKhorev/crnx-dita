@@ -28,19 +28,27 @@ class DiagramOutput {
 						})
 					))
 				),
-				/*
-				options.dag.visibleDepthNodes.map(classIdSet=>$("<tr>").append(
-					options.columns.map(classId=>classIdSet[classId]?`<th>${options.data[classId].name}</th>`:`<th></th>`)
-				))
-				*/
-				layout.map(row=>$("<tr>").append(
+				layout.map(row=>$("<tr>").addClass(
+					row.some(cell=>cell.node!==undefined) ? 'nodes' : 'arcs'
+				).append(
 					row.map(cell=>{
 						const $cell=$("<th>")
 						if (cell.node!==undefined) {
 							const classId=cell.node
-							$cell.append(options.data[classId].name,' ')
+							$cell.append(options.data[classId].name)
 						}
-						$cell.append(JSON.stringify(cell))
+						//$cell.append(JSON.stringify(cell))
+						let $arcs
+						for (let arc of ['bt','bl','br','lr','lt','rl','rt']) {
+							if (cell[arc]) {
+								if ($arcs===undefined) $arcs=$("<span class=arcs>")
+								//$arcs.append(`<span class=${arc}>${arc}</span>`)
+								$arcs.append(`<span class='arc ${arc}'>`)
+							}
+						}
+						if ($arcs!==undefined) {
+							$cell.append($arcs)
+						}
 						return $cell
 					})
 				))

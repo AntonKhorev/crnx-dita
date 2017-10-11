@@ -54,8 +54,8 @@ module.exports=(columns,parents)=>{
 				const arcRow=columns.map((parentNode,x)=>{
 					const cell={}
 					if (parents[childNode][parentNode]) {
-						if (x<childX) cell.lt=true
-						if (x>childX) cell.rt=true
+						if (x<childX) cell.rt=true
+						if (x>childX) cell.lt=true
 					}
 					if (childX<minParentX) {
 						if (x==childX) cell.br=true
